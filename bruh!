@@ -1,0 +1,74 @@
+int cols, rows, res, period;
+float stepAngle, squareAngle, starAngle;
+
+void setup() {
+  size(600, 600);
+
+  res = 12;
+  cols = width / res;
+  rows = height / res;
+  period = 180;
+
+  squareAngle = 0;
+  starAngle = 0;
+  stepAngle = TWO_PI / period;
+}
+
+void draw() {
+  checkBoard();
+  saphire();
+}
+
+void checkBoard() {
+  noStroke();
+  for (int x = 0; x < cols; x++)
+    for (int y = 0; y < rows; y++) {
+      if ((x + y) % 2 == 0) {
+        float red = map(cos(TWO_PI * frameCount / period), -1, 1, 100, 255);
+        fill(red, 0, 0);
+      } else {
+        float blue = map(sin(TWO_PI * frameCount / period), -1, 1, 100, 255);
+        fill(0, 0, blue);
+      }
+      rectMode(CORNER);
+      rect(res * x, res * y, res, res);
+    }
+}
+
+void saphire() {
+  PVector[] points = new PVector[5];
+
+  noFill();
+  stroke(100, 255, 100);
+  strokeWeight(5);
+
+  pushMatrix();
+
+  translate(width / 2, height / 2);
+  rotate(squareAngle);
+
+  rectMode(CENTER);
+  rect(0, 0, 300, 300);
+
+  popMatrix();
+
+  pushMatrix();
+
+  translate(width / 2, height / 2);
+  rotate(starAngle);
+
+  float radius = 100, angle = 0, step = TWO_PI / points.length;
+  for (int i = 0; i < points.length; i++, angle += step)
+    points[i] = new PVector(radius * cos(angle), radius * sin(angle));
+
+  line(points[0].x, points[0].y, points[2].x, points[2].y);
+  line(points[0].x, points[0].y, points[3].x, points[3].y);
+  line(points[1].x, points[1].y, points[3].x, points[3].y);
+  line(points[1].x, points[1].y, points[4].x, points[4].y);
+  line(points[2].x, points[2].y, points[4].x, points[4].y);
+
+  popMatrix();
+
+  squareAngle -= stepAngle;
+  starAngle += stepAngle;
+}
